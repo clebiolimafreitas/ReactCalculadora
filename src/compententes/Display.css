@@ -1,7 +1,6 @@
 .display {
     grid-column: span 4;    
-    justify-content: flex-end;
-    align-items: center;
+    text-align: end;
     padding: 20px;
     font-size: 2.1em;
 }

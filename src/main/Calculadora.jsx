@@ -16,7 +16,7 @@ export default props =>
     return (
         <React.Fragment>
             <h1>Calculadora</h1>            
-            <div className="teclado">     
+            <div className="calculadora">     
                 <Display value={0}/>   
                 {listaBotoes}                
             </div>             
