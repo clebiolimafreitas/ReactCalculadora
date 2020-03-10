@@ -3,7 +3,7 @@ import './Botao.css'
 
 export default props => {
     return (
-        <button>
+        <button className={props.className}>
             {props.label}
         </button>        
     )
