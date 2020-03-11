@@ -7,22 +7,42 @@ export default props => {
 
     const [display, setDisplay] = useState("0")
     const [memoria, setMemoria] = useState("0")
-    //const [resultado, setResultado] = useState("0")
+    const [substitui, setSubstitui] = useState("0")
 
+    function replace(str){
+        return str.replace("%","/100").replace("÷","/").replace("x","*")
+    }
+    
     useEffect(() => {
         switch (memoria)
         {
             case "C":
                 setDisplay("0")
-                break
+                setMemoria("0")
+                break 
             case "CE":
-                setDisplay("0")    
-                break            
-            default:
-                setDisplay(String(Number(display+memoria)))
-        }
-            
-    },[memoria],)
+                setDisplay("0")
+                break 
+            case "=":
+                let expressao = replace(display)                 
+                setDisplay(eval(expressao))
+                setSubstitui("1")
+                break
+            default:    
+                console.log(substitui) 
+                if (substitui === "1"){
+                    setDisplay(memoria)
+                    setSubstitui("0")
+                }                    
+                else
+                    setDisplay(display+memoria)
+        }            
+    },[memoria])// eslint-disable-line
+
+    useEffect(() => {
+        if (!Number.isNaN(Number(display)))
+            setDisplay(String(Number(display)))
+    },[display])
 
     /*const botoes = [
         {label: "%"},{label: "C"},{label: "CE"},{label:"/"},
@@ -35,29 +55,32 @@ export default props => {
     const listaBotoes = botoes.map((botao) => <Botao {...botao}*/
 
     return (
-        <div>
-            <h1>Calculadora</h1>
+        <div>           
             <div className="calculadora">
-                <Display value={display} />
-                <Botao label="%" onClick={() => setMemoria("%")}/>
+                <Display value={display} />                
+                <Botao label="CE" onClick={() => setMemoria("CE")} className="double"/>
                 <Botao label="C" onClick={() => setMemoria("C")}/>
-                <Botao label="CE" onClick={() => setMemoria("CE")}/>
-                <Botao label="/" onClick={() => setMemoria("/")}/>
+                <Botao label="%" onClick={() => setMemoria("%")}/>
+                
                 <Botao label="7" onClick={() => setMemoria("7")}/>
                 <Botao label="8" onClick={() => setMemoria("8")}/>
                 <Botao label="9" onClick={() => setMemoria("9")}/>
-                <Botao label="x" onClick={() => setMemoria("x")}/>
+                <Botao label="÷" onClick={() => setMemoria("÷")}/>
+                
                 <Botao label="4" onClick={() => setMemoria("4")}/>
                 <Botao label="5" onClick={() => setMemoria("5")}/>
-                <Botao label="6" onClick={() => setMemoria("6")}/>          
-                <Botao label="-" onClick={() => setMemoria("-")}/>
+                <Botao label="6" onClick={() => setMemoria("6")}/>   
+                <Botao label="x" onClick={() => setMemoria("x")}/>
+                
                 <Botao label="1" onClick={() => setMemoria("1")}/>
                 <Botao label="2" onClick={() => setMemoria("2")}/>
                 <Botao label="3" onClick={() => setMemoria("3")}/>
+                <Botao label="-" onClick={() => setMemoria("-")}/>
+                
+                <Botao label="0" onClick={() => setMemoria("0")}/>
+                <Botao label="." onClick={() => setMemoria(".")}/>
+                <Botao label="=" onClick={() => setMemoria("=")}/>
                 <Botao label="+" onClick={() => setMemoria("+")}/>
-                <Botao label="0" onClick={() => setDisplay("0")}/>
-                <Botao label="." onClick={() => setDisplay(".")}/>
-                <Botao label="=" onClick={() => setDisplay("=")} className="double"/>                
             </div>            
         </div>
     )
