@@ -9,7 +9,6 @@ export default props => {
     const [memoria, setMemoria] = useState("")
     const [substitui, setSubstitui] = useState(false)
     const [calcula, setCalcula] = useState(false)
-    //const []    
 
     function replace(str){
         return str.replace("%","/100").replace("÷","/").replace("x","*")
@@ -41,7 +40,7 @@ export default props => {
                     }else{
                         setDisplay(tecla) 
                     }     
-                    setMemoria("")
+                    //setMemoria("")
                 }                    
                 else{
                     setDisplay(display+tecla)                    
@@ -56,14 +55,14 @@ export default props => {
     },[display])
 
     const botoes = [
-        {label: "%"},{label: "C"},{label: "CE"},{label: "←"},        
-        {label: "7"},{label: "8"},{label: "9"},{label:"÷"},
-        {label: "4"},{label: "5"},{label: "6"},{label: "x"},
-        {label: "1"},{label: "2"},{label: "3"},{label: "-"},
-        {label: "0"},{label: "."},{label: "="},{label: "+"}
+        "%","C","CE","←",        
+        "7","8","9","÷",
+        "4","5","6","x",
+        "1","2","3","-",
+        "0",".","=","+"
     ]
 
-    const listaBotoes = botoes.map((botao, index) => <Botao key={index} label={botao.label} className={botao.className} onClick={() => atualizaDisplay(botao.label)}/>)
+    const listaBotoes = botoes.map((botao, index) => <Botao key={index} label={botao} onClick={() => atualizaDisplay(botao)}/>)
 
     return (       
         <div className="calculadora">
