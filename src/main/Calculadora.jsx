@@ -6,82 +6,69 @@ import './Calculadora.css'
 export default props => {
 
     const [display, setDisplay] = useState("0")
-    const [memoria, setMemoria] = useState("0")
-    const [substitui, setSubstitui] = useState("0")
+    const [memoria, setMemoria] = useState("")
+    const [substitui, setSubstitui] = useState(false)
+    const [calcula, setCalcula] = useState(false)
+    //const []    
 
     function replace(str){
         return str.replace("%","/100").replace("÷","/").replace("x","*")
     }
-    
-    useEffect(() => {
-        switch (memoria)
+     
+    const atualizaDisplay = (tecla) => { 
+        switch (tecla)
         {
             case "C":
                 setDisplay("0")
-                setMemoria("0")
                 break 
             case "CE":
                 setDisplay("0")
-                break 
+                break
+            case "←":
+                setDisplay(display.substring(0,display.length-1))
+                break
             case "=":
-                let expressao = replace(display)                 
+                let expressao = replace(display)     
+                let memoAux = memoria === "0" ? "" : memoria
                 setDisplay(eval(expressao))
-                setSubstitui("1")
+                setMemoria(memoAux+expressao)
+                setSubstitui(true)
                 break
             default:    
-                console.log(substitui) 
-                if (substitui === "1"){
-                    setDisplay(memoria)
-                    setSubstitui("0")
+                if (substitui){
+                    if(tecla === "%" || tecla === "/" || tecla === "x" || tecla === "-" || tecla === "+"){                            
+                        setDisplay(display+tecla)  
+                    }else{
+                        setDisplay(tecla) 
+                    }     
+                    setMemoria("")
                 }                    
-                else
-                    setDisplay(display+memoria)
+                else{
+                    setDisplay(display+tecla)                    
+                }
+                setSubstitui(false)
         }            
-    },[memoria])// eslint-disable-line
+    };
 
     useEffect(() => {
         if (!Number.isNaN(Number(display)))
-            setDisplay(String(Number(display)))
+            setDisplay(String(Number(display)).substring(0,10))
     },[display])
 
-    /*const botoes = [
-        {label: "%"},{label: "C"},{label: "CE"},{label:"/"},
-        {label: "7"},{label: "8"},{label: "9"},{label: "X"},
-        {label: "4"},{label: "5"},{label: "6"},{label: "-"},
-        {label: "1"},{label: "2"},{label: "3"},{label: "+"},
-        {label: "0"},{label: "."},{label: "=", className: "double"}
+    const botoes = [
+        {label: "%"},{label: "C"},{label: "CE"},{label: "←"},        
+        {label: "7"},{label: "8"},{label: "9"},{label:"÷"},
+        {label: "4"},{label: "5"},{label: "6"},{label: "x"},
+        {label: "1"},{label: "2"},{label: "3"},{label: "-"},
+        {label: "0"},{label: "."},{label: "="},{label: "+"}
     ]
 
-    const listaBotoes = botoes.map((botao) => <Botao {...botao}*/
+    const listaBotoes = botoes.map((botao, index) => <Botao key={index} label={botao.label} className={botao.className} onClick={() => atualizaDisplay(botao.label)}/>)
 
-    return (
-        <div>           
-            <div className="calculadora">
-                <Display value={display} />                
-                <Botao label="CE" onClick={() => setMemoria("CE")} className="double"/>
-                <Botao label="C" onClick={() => setMemoria("C")}/>
-                <Botao label="%" onClick={() => setMemoria("%")}/>
-                
-                <Botao label="7" onClick={() => setMemoria("7")}/>
-                <Botao label="8" onClick={() => setMemoria("8")}/>
-                <Botao label="9" onClick={() => setMemoria("9")}/>
-                <Botao label="÷" onClick={() => setMemoria("÷")}/>
-                
-                <Botao label="4" onClick={() => setMemoria("4")}/>
-                <Botao label="5" onClick={() => setMemoria("5")}/>
-                <Botao label="6" onClick={() => setMemoria("6")}/>   
-                <Botao label="x" onClick={() => setMemoria("x")}/>
-                
-                <Botao label="1" onClick={() => setMemoria("1")}/>
-                <Botao label="2" onClick={() => setMemoria("2")}/>
-                <Botao label="3" onClick={() => setMemoria("3")}/>
-                <Botao label="-" onClick={() => setMemoria("-")}/>
-                
-                <Botao label="0" onClick={() => setMemoria("0")}/>
-                <Botao label="." onClick={() => setMemoria(".")}/>
-                <Botao label="=" onClick={() => setMemoria("=")}/>
-                <Botao label="+" onClick={() => setMemoria("+")}/>
-            </div>            
-        </div>
+    return (       
+        <div className="calculadora">
+            <Display value={display} memoria={memoria}/>                
+            {listaBotoes}
+        </div>    
     )
 }

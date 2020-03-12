@@ -4,3 +4,10 @@
     padding: 20px;
     font-size: 2.1em;
 }
+
+.subDisplay{
+    grid-column: span 4;
+    text-align: end;
+    padding: 1px;
+    font-size: 20px
+}
