@@ -1,12 +1,11 @@
 .display {
     grid-column: span 4;    
     text-align: end;
-    padding: 20px;
-    font-size: 2.1em;
+    padding: 2px;
+    font-size: 40px
 }
 
 .subDisplay{
-    grid-column: span 4;
     text-align: end;
     padding: 1px;
     font-size: 20px

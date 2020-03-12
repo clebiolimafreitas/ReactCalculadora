@@ -7,11 +7,16 @@ export default props => {
 
     const [display, setDisplay] = useState("0")
     const [memoria, setMemoria] = useState("")
-    const [substitui, setSubstitui] = useState(false)
-    const [calcula, setCalcula] = useState(false)
 
     function replace(str){
         return str.replace("%","/100").replace("÷","/").replace("x","*")
+    }
+
+    function calcular(){
+        let expressao = replace(display)     
+        let memoAux = memoria === "0" ? "" : memoria
+        setMemoria(memoAux+expressao)
+        setDisplay(eval(expressao+display))        
     }
      
     const atualizaDisplay = (tecla) => { 
@@ -19,6 +24,7 @@ export default props => {
         {
             case "C":
                 setDisplay("0")
+                setMemoria("")
                 break 
             case "CE":
                 setDisplay("0")
@@ -27,25 +33,19 @@ export default props => {
                 setDisplay(display.substring(0,display.length-1))
                 break
             case "=":
-                let expressao = replace(display)     
-                let memoAux = memoria === "0" ? "" : memoria
-                setDisplay(eval(expressao))
-                setMemoria(memoAux+expressao)
-                setSubstitui(true)
+                calcular()                
                 break
             default:    
-                if (substitui){
-                    if(tecla === "%" || tecla === "/" || tecla === "x" || tecla === "-" || tecla === "+"){                            
-                        setDisplay(display+tecla)  
-                    }else{
-                        setDisplay(tecla) 
-                    }     
-                    //setMemoria("")
-                }                    
-                else{
-                    setDisplay(display+tecla)                    
-                }
-                setSubstitui(false)
+                if(tecla === "%" || tecla === "/" || tecla === "x" || tecla === "-" || tecla === "+"){   
+                    let memoAux = (memoria === "0" ? "" : memoria) + display+tecla    
+                    setMemoria(memoAux)   
+                    if (calcula){
+                        calcular()
+                        setCalcula(false)
+                    }                   
+                }else{
+                    setDisplay(tecla) 
+                }     
         }            
     };
 
