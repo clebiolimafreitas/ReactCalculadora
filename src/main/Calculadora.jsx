@@ -7,44 +7,59 @@ export default props => {
 
     const [display, setDisplay] = useState("0")
     const [memoria, setMemoria] = useState("")
+    const [tecla, setTecla] = useState("")
 
-    function replace(str){
-        return str.replace("%","/100").replace("÷","/").replace("x","*")
+    const inicializaVariaveis = () => {
+        setDisplay("0")
+        setMemoria("")
+        setTecla("")
     }
 
-    function calcular(){
-        let expressao = replace(display)     
-        let memoAux = memoria === "0" ? "" : memoria
-        setMemoria(memoAux+expressao)
-        setDisplay(eval(expressao+display))        
+    const inicializaDisplay = () => {
+        setDisplay("0")
+        setTecla("")
+    }
+
+    const backSpace = () => setDisplay(display.substring(0,display.length-1))
+
+    const replace = (str) => str.replace("%","/100").replace("÷","/").replace("x","*")
+
+    const calcular = () => {
+        if (tecla === "%" || tecla === "÷" || tecla === "x" || tecla === "-" || tecla === "+"){
+            let expressao = replace(display)  
+            let memoAux = replace(memoria === "0" ? "" : memoria)
+            setDisplay(eval(memoAux.substring(0, memoAux.length-1)))
+        }
+        else if (tecla === "="){
+            let expressao = replace(display)  
+            let memoAux = replace(memoria === "0" ? "" : memoria)
+            setMemoria(memoAux+expressao)
+            setDisplay(eval(memoAux+expressao))
+        }            
     }
      
-    const atualizaDisplay = (tecla) => { 
-        switch (tecla)
-        {
+    const atualizaDisplay = (digito) => { 
+        setTecla(digito)
+        switch (digito)
+        {           
             case "C":
-                setDisplay("0")
-                setMemoria("")
+                inicializaVariaveis()
                 break 
             case "CE":
-                setDisplay("0")
+                inicializaDisplay()
                 break
             case "←":
-                setDisplay(display.substring(0,display.length-1))
+                backSpace()
                 break
             case "=":
-                calcular()                
+                calcular()     
                 break
             default:    
-                if(tecla === "%" || tecla === "/" || tecla === "x" || tecla === "-" || tecla === "+"){   
-                    let memoAux = (memoria === "0" ? "" : memoria) + display+tecla    
-                    setMemoria(memoAux)   
-                    if (calcula){
-                        calcular()
-                        setCalcula(false)
-                    }                   
+                if(digito === "%" || digito === "÷" || digito === "x" || digito === "-" || digito === "+"){   
+                    let memoAux = (memoria === "0" ? "" : memoria) + display+digito    
+                    setMemoria(memoAux)                           
                 }else{
-                    setDisplay(tecla) 
+                    setDisplay(digito) 
                 }     
         }            
     };
@@ -53,6 +68,10 @@ export default props => {
         if (!Number.isNaN(Number(display)))
             setDisplay(String(Number(display)).substring(0,10))
     },[display])
+
+    useEffect(() => {        
+        calcular() 
+    },[memoria])
 
     const botoes = [
         "%","C","CE","←",        
