@@ -6,40 +6,32 @@ import './Calculadora.css'
 export default props => {
 
     const [display, setDisplay] = useState("0")
-    const [memoria, setMemoria] = useState("")
+    const [memoria, setMemoria] = useState("0")
     const [tecla, setTecla] = useState("")
 
-    const inicializaVariaveis = () => {
+    const inicializaVariaveis = _ => {
         setDisplay("0")
-        setMemoria("")
-        setTecla("")
+        setMemoria("0")
+        setTecla("0")
     }
 
-    const inicializaDisplay = () => {
+    const inicializaDisplay = _ =>{
         setDisplay("0")
-        setTecla("")
+        setTecla("0")
     }
 
-    const backSpace = () => setDisplay(display.substring(0,display.length-1))
+    const backSpace = _ => setDisplay(display.substring(0,display.length-1))
 
-    const replace = (str) => str.replace("%","/100").replace("÷","/").replace("x","*")
+    const myReplace = str => {
+        return str.replace(/%/g,'/100').replace(/÷/g,'/').replace(/x/g,'*')
+    }
 
-    const calcular = () => {
-        if (tecla === "%" || tecla === "÷" || tecla === "x" || tecla === "-" || tecla === "+"){
-            let expressao = replace(display)  
-            let memoAux = replace(memoria === "0" ? "" : memoria)
-            setDisplay(eval(memoAux.substring(0, memoAux.length-1)))
-        }
-        else if (tecla === "="){
-            let expressao = replace(display)  
-            let memoAux = replace(memoria === "0" ? "" : memoria)
-            setMemoria(memoAux+expressao)
-            setDisplay(eval(memoAux+expressao))
-        }            
+    const calcular = _ => {
+        setDisplay(eval(myReplace(memoria)).toString())        
     }
      
-    const atualizaDisplay = (digito) => { 
-        setTecla(digito)
+    const atualizaDisplay = digito => { 
+        setTecla(String(digito))
         switch (digito)
         {           
             case "C":
@@ -54,24 +46,18 @@ export default props => {
             case "=":
                 calcular()     
                 break
-            default:    
-                if(digito === "%" || digito === "÷" || digito === "x" || digito === "-" || digito === "+"){   
-                    let memoAux = (memoria === "0" ? "" : memoria) + display+digito    
-                    setMemoria(memoAux)                           
-                }else{
-                    setDisplay(digito) 
-                }     
+            default:  
+                if(memoria === "0")
+                    setMemoria(digito) 
+                else
+                    setMemoria(memoria+digito)      
         }            
     };
 
-    useEffect(() => {
-        if (!Number.isNaN(Number(display)))
-            setDisplay(String(Number(display)).substring(0,10))
-    },[display])
-
     useEffect(() => {        
-        calcular() 
-    },[memoria])
+        if('%+-x÷'.indexOf(tecla) < 0)
+            calcular()           
+    },[memoria])// eslint-disable-line
 
     const botoes = [
         "%","C","CE","←",        
