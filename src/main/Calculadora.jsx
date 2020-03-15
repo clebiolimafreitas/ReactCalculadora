@@ -40,8 +40,11 @@ export default props => {
     const atualizaMemoriaCalculo = _ => {
         debugger
         try{
-            if('+-x÷=%'.indexOf(tecla) < 0) {//numeros        
-                setDisplay(eval(myReplace(memoria)))           
+            if('+-x÷=%'.indexOf(tecla) < 0) {//numeros      
+                if (memoria.length > 2) 
+                    setDisplay(eval(myReplace(memoria)).toString()) 
+                else
+                    setDisplay(Number(myReplace(memoria)).toString())
             }else if (tecla === "=" || '+-x÷%'.indexOf(memoria.substring(memoria.length-2, memoria.length-1)) >= 0){ // pressionado igual(=) ou penúltima tecla foi um operador  
                 //descobrindo o indice do último operador digitado
                 const indexUltimoOperador = regExpLastIndex(memoria)         
@@ -60,6 +63,7 @@ export default props => {
     }
      
     const atualizaDisplay = digito => { 
+        debugger
         try{
             setTecla(String(digito))
             if (digito === "C"){
@@ -68,10 +72,10 @@ export default props => {
                 inicializaDisplay()
             }else if (digito === "←"){
                 backSpace()       
-            }else if(digito !== "="){
-                setMemoria(memoria+digito)     
             }else if(memoria === "0"){
-                setMemoria(digito)                    
+                setMemoria(digito) 
+            }else if(digito !== "="){
+                setMemoria(memoria+digito) 
             }
         }catch(e){
             inicializaVariaveis()
@@ -81,7 +85,7 @@ export default props => {
     }
 
     useEffect(() => {
-        if(display.trim === "NaN" || display.trim === "Infinity"){
+        if(display === "NaN" || display === "Infinity"){
             setDisplay("Error")
         }            
     },[display])
