@@ -9,6 +9,16 @@ export default props => {
     const [memoria, setMemoria] = useState("0")
     const [tecla, setTecla] = useState("")
 
+    const regExpLastIndex = str =>{
+        const regex = new RegExp( /x|\+|\-|÷|%/, "g" )
+        const textAux = str.substring(0,str.length-2)
+        let indexUltimoOperador = 0
+        while (regex.test(textAux)){                         
+            indexUltimoOperador = regex.lastIndex
+        }   
+        return indexUltimoOperador            
+    }
+
     const inicializaVariaveis = _ => {
         setDisplay("0")
         setMemoria("0")
@@ -20,24 +30,26 @@ export default props => {
         setTecla("0")
     }
 
-    const backSpace = _ => setDisplay(display.substring(0,display.length-1))
+    const backSpace = _ => {
+        if (display !== "Error")
+            setDisplay(display.substring(0,display.length-1))
+    }
 
     const myReplace = str => str.replace(/%/g,'/100').replace(/÷/g,'/').replace(/x/g,'*')
 
     const atualizaMemoriaCalculo = _ => {
-        //debugger
+        debugger
         try{
-            if('+-x÷='.indexOf(tecla) < 0) {//numeros        
+            if('+-x÷=%'.indexOf(tecla) < 0) {//numeros        
                 setDisplay(eval(myReplace(memoria)))           
-            }else if (tecla === "=" || '+-x÷'.indexOf(memoria.substring(memoria.length-2, memoria.length-1)) >= 0){ // pressionado igual(=) ou penúltima tecla foi um operador  
-                //criando regra para descobrir o indice do último operador digitado
-                const regex = new RegExp( /x|\+|\-|÷/, "g" )
-                regex.test(memoria.substring(0,memoria.length-2))
-                const indexUltimoOperador = regex.lastIndex
-                setTecla(memoria.substring(memoria.length-3,memoria.length-2)) //atualiza tecla atual para o último número digitado
+            }else if (tecla === "=" || '+-x÷%'.indexOf(memoria.substring(memoria.length-2, memoria.length-1)) >= 0){ // pressionado igual(=) ou penúltima tecla foi um operador  
+                //descobrindo o indice do último operador digitado
+                const indexUltimoOperador = regExpLastIndex(memoria)         
+                //atualiza tecla atual para o último número digitado
+                setTecla(memoria.substring(memoria.length-3,memoria.length-2)) 
                 // substitui o último operador digitado pelo novo
                 setMemoria(memoria.substring(0,memoria.length-2)+tecla+memoria.substring(indexUltimoOperador,memoria.length-2)) 
-            }else if ('+-x÷'.indexOf(tecla) >= 0){ //operadores
+            }else if ('+-x÷%'.indexOf(tecla) >= 0){ //operadores
                 setDisplay(eval(myReplace(memoria.substring(0,memoria.length-1))))  
             }
         }catch(e){
@@ -67,6 +79,12 @@ export default props => {
             console.log(e)
         }        
     }
+
+    useEffect(() => {
+        if(display.trim === "NaN" || display.trim === "Infinity"){
+            setDisplay("Error")
+        }            
+    },[display])
 
     useEffect(() => {    
         atualizaMemoriaCalculo()           
