@@ -124,8 +124,7 @@ export default props => {
         "0",".","=","+"
     ]
 
-    const listaBotoes = botoes.map((botao, index) => 
-        <Botao key={index} label={botao} onClick={() => atualizaDisplay(botao)}/>)
+    const listaBotoes = botoes.map((botao, index) => <Botao key={index} label={botao} onClick={() => atualizaDisplay(botao)}/>)
 
     return (       
         <div className="calculadora">
