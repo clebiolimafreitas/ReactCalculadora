@@ -41,26 +41,42 @@ export default props => {
         str = str.replace(/x\./g, "x0.")
         str = str.replace(/÷\./g, "÷0.")
         str = str.replace(/%\./g, "%0.")
-        str = str.replace(/%/g,'/100').replace(/÷/g,'/').replace(/x/g,'*')        
+        str = str.replace(/%/g,'/100').replace(/÷/g,'/').replace(/x/g,'*').replace(/=/g,"")   
         return str
     }
 
+    const calcula = _ => {
+        if (memoria.length > 2) 
+            setDisplay(eval(myReplace(memoria)).toString()) 
+        else
+            setDisplay(Number(myReplace(memoria)).toString())
+        if(memoria.indexOf("=") >= 0)
+            //exclui o = da memória de cálculo
+            setMemoria(memoria.substring(0,memoria.length-1))
+    }
+
+    const trataOperadorDuplicado = _ => {
+        //descobrindo o indice do último operador digitado
+        const indexUltimoOperador = regExpLastIndex(memoria)         
+        //atualiza tecla atual para o último número digitado
+        setTecla(memoria.substring(memoria.length-3,memoria.length-2)) 
+        // substitui o último operador digitado pelo novo
+        setMemoria(memoria.substring(0,memoria.length-2)+tecla+memoria.substring(indexUltimoOperador,memoria.length-2)) 
+    }
+
+    const trataOperador = _ => {
+        setDisplay(eval(myReplace(memoria.substring(0,memoria.length-1))))
+    }
+
     const atualizaMemoriaCalculo = _ => {
+        debugger
         try{
-            if('+-x÷=%'.indexOf(tecla) < 0) {//numeros      
-                if (memoria.length > 2) 
-                    setDisplay(eval(myReplace(memoria)).toString()) 
-                else
-                    setDisplay(Number(myReplace(memoria)).toString())
-            }else if (tecla === "=" || '+-x÷%'.indexOf(memoria.substring(memoria.length-2, memoria.length-1)) >= 0){ // pressionado igual(=) ou penúltima tecla foi um operador  
-                //descobrindo o indice do último operador digitado
-                const indexUltimoOperador = regExpLastIndex(memoria)         
-                //atualiza tecla atual para o último número digitado
-                setTecla(memoria.substring(memoria.length-3,memoria.length-2)) 
-                // substitui o último operador digitado pelo novo
-                setMemoria(memoria.substring(0,memoria.length-2)+tecla+memoria.substring(indexUltimoOperador,memoria.length-2)) 
+            if(tecla === "=") {  
+                calcula()
+            }else if ('+-x÷=%'.indexOf(tecla) >= 0 && '+-x÷%'.indexOf(memoria.substring(memoria.length-2, memoria.length-1)) >= 0){ // última e penúltima teclas foram operadores  
+                trataOperadorDuplicado()
             }else if ('+-x÷%'.indexOf(tecla) >= 0){ //operadores
-                setDisplay(eval(myReplace(memoria.substring(0,memoria.length-1))))  
+                trataOperador()  
             }
         }catch(e){
             inicializaVariaveis()
@@ -80,7 +96,7 @@ export default props => {
                 backSpace()       
             }else if(memoria === "0"){
                 setMemoria(digito) 
-            }else if(digito !== "="){
+            }else{
                 setMemoria(memoria+digito) 
             }
         }catch(e){
@@ -94,7 +110,7 @@ export default props => {
         if(display === "NaN" || display === "Infinity"){
             setDisplay("Error")
         }            
-    },[display])
+    },[display])// eslint-disable-line
 
     useEffect(() => {    
         atualizaMemoriaCalculo()           
@@ -108,7 +124,8 @@ export default props => {
         "0",".","=","+"
     ]
 
-    const listaBotoes = botoes.map((botao, index) => <Botao key={index} label={botao} onClick={() => atualizaDisplay(botao)}/>)
+    const listaBotoes = botoes.map((botao, index) => 
+        <Botao key={index} label={botao} onClick={() => atualizaDisplay(botao)}/>)
 
     return (       
         <div className="calculadora">
