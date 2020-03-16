@@ -35,10 +35,17 @@ export default props => {
             setDisplay(display.substring(0,display.length-1))
     }
 
-    const myReplace = str => str.replace(/%/g,'/100').replace(/÷/g,'/').replace(/x/g,'*')
+    const myReplace = str => {
+        str = str.replace(/\+\./g, "+0.")
+        str = str.replace(/\-\./g, "-0.")
+        str = str.replace(/x\./g, "x0.")
+        str = str.replace(/÷\./g, "÷0.")
+        str = str.replace(/%\./g, "%0.")
+        str = str.replace(/%/g,'/100').replace(/÷/g,'/').replace(/x/g,'*')        
+        return str
+    }
 
     const atualizaMemoriaCalculo = _ => {
-        debugger
         try{
             if('+-x÷=%'.indexOf(tecla) < 0) {//numeros      
                 if (memoria.length > 2) 
@@ -63,7 +70,6 @@ export default props => {
     }
      
     const atualizaDisplay = digito => { 
-        debugger
         try{
             setTecla(String(digito))
             if (digito === "C"){
