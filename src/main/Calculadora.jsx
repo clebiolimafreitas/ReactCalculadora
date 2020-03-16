@@ -49,10 +49,10 @@ export default props => {
         if (memoria.length > 2) 
             setDisplay(eval(myReplace(memoria)).toString()) 
         else
-            setDisplay(Number(myReplace(memoria)).toString())
+            setDisplay(Number(myReplace(memoria)).toString())    
         if(memoria.indexOf("=") >= 0)
             //exclui o = da memória de cálculo
-            setMemoria(memoria.substring(0,memoria.length-1))
+            setMemoria(memoria.substring(0,memoria.length-1))    
     }
 
     const trataOperadorDuplicado = _ => {
@@ -73,7 +73,7 @@ export default props => {
         try{
             if(tecla === "=") {  
                 calcula()
-            }else if ('+-x÷=%'.indexOf(tecla) >= 0 && '+-x÷%'.indexOf(memoria.substring(memoria.length-2, memoria.length-1)) >= 0){ // última e penúltima teclas foram operadores  
+            }else if ('+-x÷%='.indexOf(tecla) >= 0 && '+-x÷%'.indexOf(memoria.substring(memoria.length-2, memoria.length-1)) >= 0){ // última e penúltima teclas foram operadores  
                 trataOperadorDuplicado()
             }else if ('+-x÷%'.indexOf(tecla) >= 0){ //operadores
                 trataOperador()  
@@ -88,16 +88,15 @@ export default props => {
     const atualizaDisplay = digito => { 
         try{
             setTecla(String(digito))
-            if (digito === "C"){
+            if (digito === "C"){                
                 inicializaVariaveis()
-            }else if (digito === "CE"){
+            }else if (digito === "CE"){                
                 inicializaDisplay()
             }else if (digito === "←"){
                 backSpace()       
-            }else if(memoria === "0"){
-                setMemoria(digito) 
             }else{
-                setMemoria(memoria+digito) 
+                setDisplay(display+digito)
+                //setMemoria(memoria+digito) 
             }
         }catch(e){
             inicializaVariaveis()
@@ -109,11 +108,12 @@ export default props => {
     useEffect(() => {
         if(display === "NaN" || display === "Infinity"){
             setDisplay("Error")
-        }            
+        }       
+        atualizaMemoriaCalculo()  
     },[display])// eslint-disable-line
 
     useEffect(() => {    
-        atualizaMemoriaCalculo()           
+        //atualizaMemoriaCalculo()           
     },[memoria])// eslint-disable-line
 
     const botoes = [
